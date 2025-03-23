@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\ClassesController;
@@ -7,6 +8,16 @@ use App\Http\Controllers\MbgController;
 
 Route::get('/', function () {
     return view('welcome');
+});
+
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
 Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance.index');
@@ -25,3 +36,4 @@ Route::get('/mbgs/inputFoto/{mbg}', [MbgController::class, 'inputFoto'])->name('
 Route::post('/mbgs/storeFoto/{mbg}', [MbgController::class, 'storeFoto'])->name('mbgs.storeFoto');
 Route::post('/mbgs/update-status', [MbgController::class, 'updateStatus'])->name('mbgs.updateStatus');
 
+require __DIR__.'/auth.php';
